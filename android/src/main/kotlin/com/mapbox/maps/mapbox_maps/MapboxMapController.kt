@@ -7,7 +7,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
-import androidx.lifecycle.ViewTreeLifecycleOwner
+import androidx.lifecycle.setViewTreeLifecycleOwner
 import com.mapbox.bindgen.Value
 import com.mapbox.common.SettingsServiceFactory
 import com.mapbox.common.SettingsServiceStorageType
@@ -79,9 +79,8 @@ class MapboxMapController(
       parentLifecycle.addObserver(this)
     }
 
-    override fun getLifecycle(): Lifecycle {
-      return lifecycleRegistry
-    }
+    override val lifecycle: Lifecycle
+      get() = lifecycleRegistry
 
     override fun onCreate(owner: LifecycleOwner) {
       lifecycleRegistry.currentState = Lifecycle.State.CREATED
@@ -140,7 +139,7 @@ class MapboxMapController(
     changeUserAgent(pluginVersion)
 
     lifecycleHelper = LifecycleHelper(lifecycleProvider.getLifecycle()!!)
-    ViewTreeLifecycleOwner.set(mapView, lifecycleHelper)
+    mapView.setViewTreeLifecycleOwner(lifecycleHelper)
 
     StyleManager.setUp(proxyBinaryMessenger, styleController)
     _CameraManager.setUp(proxyBinaryMessenger, cameraController)
